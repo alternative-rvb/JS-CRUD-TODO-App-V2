@@ -1,3 +1,12 @@
+import {createElement} from "../functions/dom.js";
+
+/**
+ * @typedef {Object} Todo
+ * @property {number} id
+ * @property {string} title
+ * @property {boolean} completed
+ */
+
 export class TodoList {
     /** @type {Todo[]} */
 
@@ -24,29 +33,60 @@ export class TodoList {
             <button type="button" class=" btn btn-outline-primary" data-filter="done">Faites</button>
         </div>
 
-        <ul class="list-group">
-        <li class="todo list-group-item d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" id="todo-1">
-            <label class="ms-2 form-check-label" for="todo-1">
-                Tâche à faire 2
-            </label>
-            <label class="ms-auto btn btn-danger btn-sm">
-            <i class="bi-trash">
-            </i>
-            </label>
-        </li>
-        <li class="todo list-group-item d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" id="todo-2">
-            <label class="ms-2 form-check-label" for="todo-2">
-                Tâche à faire 1
-            </label>
-            <label class="ms-auto btn btn-danger btn-sm">
-            <i class="bi-trash">
-            </i>
-            </label>
-        </li>
-        </ul>
+        <ul class="list-group"></ul>
     </main>
     `;
+        const list = element.querySelector(".list-group");
+        for (const todo of this.#todos) {
+            const t = new TodoListItem(todo);
+            t.appendTo(list);
+        }
+    }
+}
+
+class TodoListItem {
+    #element;
+
+    /** @param {Todo} todo */
+
+    constructor(todo) {
+        const id = `todo-${todo.id}`;
+        const li = createElement("li", {
+            class: "todo list-group-item d-flex align-items-center",
+        });
+
+        const checkbox = createElement("input", {
+            type: "checkbox",
+            id,
+            class: "form-check-input",
+            checked: todo.completed ? "" : null,
+        });
+
+        const label = createElement("label", {
+            class: "ms-2 form-check-label",
+            for: id,
+        });
+        label.innerText = todo.title;
+
+        const button = createElement("button", {
+            class: "ms-auto btn btn-danger btn-sm",
+        });
+        button.innerHTML = `<i class="bi-trash"></i>`;
+
+        li.append(checkbox, label, button);
+
+        button.addEventListener("click", (e) => this.remove(e));
+
+        this.#element = li;
+    }
+    /** @param {HTMLElement} element */
+    appendTo(element) {
+        element.append(this.#element);
+    }
+
+    /** @param {PointerEvent} e */
+    remove(e) {
+        e.preventDefault();
+        this.#element.remove();
     }
 }
