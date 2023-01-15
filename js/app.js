@@ -9,7 +9,6 @@ try {
     console.log("todos => ", todos);
     const list = new TodoList(todos);
     list.appendTo(document.querySelector("#todolist"));
-
 } catch (error) {
     const alertElmt = createElement("div", {
         class: "alert alert-danger m-2",
@@ -17,4 +16,5 @@ try {
     });
     alertElmt.innerText = "Impossible de charger les données";
     document.body.prepend(alertElmt);
+    console.error(error);
 }
